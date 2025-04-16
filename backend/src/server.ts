@@ -2,9 +2,11 @@ import http from "http";
 import { Server as IOServer } from "socket.io";
 import app from "./app";
 import { PORT } from "./config/env";
+import { initSocket } from "./config/socket";
 
 const httpServer = http.createServer(app);
 const io = new IOServer(httpServer, { cors: { origin: "*" } });
+initSocket(io);
 
 io.on("connection", (socket) => {
     console.log("🔌 client connected:", socket.id);
