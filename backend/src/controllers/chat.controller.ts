@@ -1,10 +1,10 @@
-import { Response, NextFunction } from "express";
-import { AuthRequest } from "../middleware/authGuard";
-import Message, { IMessage } from "../models/Message";
+// src/controllers/chat.controller.ts
+import { RequestHandler } from "express";
+import Message from "../models/Message";
 import aiService from "../services/ai.service";
 import { getIo } from "../config/socket";
 
-export async function getChatHistory(req: AuthRequest, res: Response, next: NextFunction) {
+export const getChatHistory: RequestHandler = async (req, res, next) => {
     try {
         const roomId = req.params.roomId;
         const messages = await Message.find({ roomId }).sort("createdAt");
@@ -12,15 +12,16 @@ export async function getChatHistory(req: AuthRequest, res: Response, next: Next
     } catch (err) {
         next(err);
     }
-}
+};
 
-export async function postMessage(req: AuthRequest, res: Response, next: NextFunction) {
+export const postMessage: RequestHandler = async (req, res, next) => {
     try {
         const { roomId, content } = req.body;
-        const userId = req.userId!;
+        // Since we extended Request in our codebase to include 'userId',
+        // we typecast here. (Alternatively, you could attach a custom type to req.)
+        const userId = (req as any).userId;
         // Save user message
         const userMsg = await Message.create({ sender: userId, roomId, content });
-        // Emit user message
         getIo().to(roomId).emit("message", userMsg);
         res.status(201).json(userMsg);
 
@@ -33,5 +34,5 @@ export async function postMessage(req: AuthRequest, res: Response, next: NextFun
     } catch (err) {
         next(err);
     }
-}
+};
 

@@ -1,3 +1,4 @@
+// src/routes/chat.routes.ts
 import { Router } from "express";
 import { getChatHistory, postMessage } from "../controllers/chat.controller";
 import { authGuard } from "../middleware/authGuard";

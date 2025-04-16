@@ -1,23 +1,22 @@
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/env";
 
-export interface AuthRequest extends Request {
-    userId?: string;
-}
-
-export function authGuard(req: AuthRequest, res: Response, next: NextFunction) {
+export const authGuard: RequestHandler = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "No token provided" });
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        res.status(401).json({ message: "No token provided" });
+        return; // early return to prevent further execution
     }
     const token = authHeader.split(" ")[1];
     try {
         const payload = jwt.verify(token, JWT_SECRET) as { userId: string };
-        req.userId = payload.userId;
+        // Using a type assertion because req might not have a userId property
+        (req as any).userId = payload.userId;
         next();
-    } catch {
+    } catch (error) {
         res.status(401).json({ message: "Invalid token" });
+        return;
     }
-}
+};
 
