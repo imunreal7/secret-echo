@@ -2,9 +2,9 @@ import express from "express";
 import cors from "cors";
 import { json } from "body-parser";
 import { connectDB } from "./config/db";
-import authRoutes from "./routes/auth.routes";
-import chatRoutes from "./routes/chat.routes";
 import { errorHandler } from "./middleware/errorHandler";
+import chatRoutes from "./routes/chat.routes";
+import authRoutes from "./routes/auth.routes";
 
 const app = express();
 app.use(cors());
