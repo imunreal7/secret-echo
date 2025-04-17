@@ -1,12 +1,12 @@
 # Real-Time Chat App
 
-A real-time chat application built with **Next.js**, **Socket.IO**, and a RESTful **NestJS** backend. Users can sign up, log in, and chat in dynamically generated rooms. Messages are persisted in a PostgreSQL database.
+A real-time chat application built with **Next.js**, **Socket.IO**, and a RESTful **NestJS** backend. Users can sign up, log in, and chat in dynamically generated rooms. Messages are persisted in a MongoDB database.
 
 ---
 
 ## DEMO
 
-![Demo](secret-echo-demo.mkv)
+[![Demo Video](/frontend/public/secret-echo-youtube-thumbnail.png)](https://youtu.be/3wxy1AJ4NrM)
 
 ---
 
@@ -43,7 +43,7 @@ Create a `.env` file in both `backend/` and `frontend/` directories:
 
 ```
 PORT=4000
-DATABASE_URL=postgresql://your_user:your_password@localhost:5432/your_db
+DATABASE_URL=your_mongodb_url
 JWT_SECRET=your_jwt_secret
 ```
 
@@ -85,7 +85,7 @@ npm run dev
 -   Built with **NestJS**, a progressive Node.js framework.
 -   RESTful endpoints for authentication and chat history.
 -   Socket.IO gateway handles real-time events.
--   PostgreSQL is used with TypeORM for persistence.
+-   MongoDB is used with TypeORM for persistence.
 
 ### Key Features
 
