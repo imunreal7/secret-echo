@@ -18,19 +18,26 @@ export const postMessage: RequestHandler = async (req: any, res, next) => {
     try {
         const { roomId, content } = req.body;
 
-        // Save user message
-        const userMsg = await Message.create({ sender: req.userId, roomId, content });
+        // Save user message (with sender)
+        const userMsg = await Message.create({
+            sender: req.userId,
+            roomId,
+            content,
+        });
+
         getIo().to(roomId).emit("message", userMsg);
         res.status(201).json(userMsg);
 
         // Simulate AI reply
         setTimeout(async () => {
             const replyContent = aiService.getReply(content);
+
+            // Save AI message (no sender)
             const aiMsg = await Message.create({
-                sender: req.userId,
                 roomId,
                 content: replyContent,
             });
+
             getIo().to(roomId).emit("message", aiMsg);
         }, 1500);
     } catch (err) {

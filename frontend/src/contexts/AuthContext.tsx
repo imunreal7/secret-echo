@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 import api from "../services/api";
 import { jwtDecode } from "jwt-decode";
-import "../styles/globals.css";
 
 interface User {
     id: string;
@@ -12,7 +11,7 @@ interface AuthContextType {
     user: User | null;
     login: (email: string, password: string) => Promise<void>;
     signup: (username: string, email: string, password: string) => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType>(null!);
@@ -39,9 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await login(email, password);
     }
 
-    function logout() {
-        localStorage.removeItem("token");
-        setUser(null);
+    async function logout() {
+        await api.post("/auth/logout");
+        await logout();
     }
 
     return (

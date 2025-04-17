@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { useRouter } from "next/router";
+import "./globals.css";
 
 export default function Signup() {
     const { signup } = useAuth();
@@ -16,32 +17,30 @@ export default function Signup() {
     }
 
     return (
-        <div className="flex items-center justify-center h-screen">
-            <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow">
-                <h1 className="text-xl mb-4">Sign Up</h1>
+        <div className="flex-center" style={{ minHeight: "100vh" }}>
+            <form onSubmit={handleSubmit} className="container">
+                <h1>Create Account</h1>
                 <input
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Username"
-                    className="w-full mb-2 p-2 border rounded"
                 />
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
-                    className="w-full mb-2 p-2 border rounded"
                 />
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="w-full mb-4 p-2 border rounded"
                 />
-                <button type="submit" className="w-full p-2 bg-green-500 text-white rounded">
-                    Sign Up
-                </button>
+                <button type="submit">Sign Up</button>
+                <p>
+                    Already have an account? <a href="/login">Login</a>
+                </p>
             </form>
         </div>
     );

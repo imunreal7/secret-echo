@@ -30,3 +30,12 @@ export const login: RequestHandler = async (req, res, next) => {
     }
 };
 
+export const logout: RequestHandler = async (req, res, next) => {
+    try {
+        res.clearCookie("token");
+        res.json({ message: "Logout successful" });
+    } catch (err) {
+        next(err);
+    }
+};
+
