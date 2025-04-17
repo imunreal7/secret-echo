@@ -19,9 +19,9 @@
         "socket.io-client": "^4.8.1"
     },
     "devDependencies": {
+        "@types/node": "^22.14.1",
         "@types/react": "^19",
         "@types/react-dom": "^19",
         "typescript": "^5"
     }
 }
-
