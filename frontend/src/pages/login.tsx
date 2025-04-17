@@ -1,38 +1,39 @@
 import { useState } from "react";
-import useAuth from "../hooks/useAuth";
+import axios from "axios";
 import { useRouter } from "next/router";
 
-export default function Login() {
-    const { login } = useAuth();
-    const router = useRouter();
+export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const router = useRouter();
 
-    async function handleSubmit(e) {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        await login(email, password);
-        router.push("/chat/general");
-    }
+        try {
+            const res = await axios.post("/api/auth/login", { email, password });
+            localStorage.setItem("token", res.data.token);
+            router.push("/chat/general");
+        } catch (err) {
+            alert("Invalid credentials");
+        }
+    };
 
     return (
         <div className="flex items-center justify-center h-screen">
-            <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow">
-                <h1 className="text-xl mb-4">Login</h1>
+            <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md">
                 <input
+                    className="block mb-4 w-full border p-2"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
-                    className="w-full mb-2 p-2 border rounded"
+                    onChange={(e) => setEmail(e.target.value)}
                 />
                 <input
+                    className="block mb-4 w-full border p-2"
                     type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="w-full mb-4 p-2 border rounded"
+                    onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">
+                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
                     Login
                 </button>
             </form>

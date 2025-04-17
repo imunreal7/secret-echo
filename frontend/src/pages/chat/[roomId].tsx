@@ -37,7 +37,6 @@ export default function ChatPage() {
     useEffect(() => {
         if (!roomId) return;
 
-        // Connect to Socket.io server (adjust URL if needed)
         const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000");
         socketRef.current = socket;
 
@@ -45,7 +44,10 @@ export default function ChatPage() {
 
         socket.on("message", (msg: Message) => {
             setMessages((prev) => [...prev, msg]);
-            setLoading(false);
+            // Stop loading indicator only when AI response arrives
+            if (msg.sender === null) {
+                setLoading(false);
+            }
         });
 
         return () => {
@@ -62,28 +64,16 @@ export default function ChatPage() {
         e.preventDefault();
         if (!newMessage.trim()) return;
 
-        // Reset input and start loading indicator
         const messageData = {
             roomId,
             content: newMessage.trim(),
         };
 
         try {
-            // Display the user message immediately
-            setMessages((prev) => [
-                ...prev,
-                {
-                    _id: "temp",
-                    sender: "user",
-                    roomId: String(roomId),
-                    content: newMessage,
-                    createdAt: new Date().toISOString(),
-                },
-            ]);
             setNewMessage("");
             setLoading(true);
 
-            // POST message to backend
+            // Send message to backend; server will emit back both user and AI messages
             await api.post("/chats", messageData);
         } catch (error) {
             console.error("Error sending message:", error);
@@ -132,4 +122,3 @@ export default function ChatPage() {
         </div>
     );
 }
-

@@ -9,7 +9,7 @@ export default function Signup() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: any) {
         e.preventDefault();
         await signup(username, email, password);
         router.push("/chat/general");

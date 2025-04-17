@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 import api from "../services/api";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import "../styles/globals.css";
 
 interface User {
     id: string;
