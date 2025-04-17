@@ -3,7 +3,7 @@ import { MONGO_URI } from "./env";
 
 export const connectDB = async () => {
     try {
-        await mongoose.connect("mongodb://localhost:27017/secretecho");
+        await mongoose.connect(MONGO_URI);
         console.log("✅ MongoDB connected");
     } catch (err) {
         console.error("❌ MongoDB connection error:", err);

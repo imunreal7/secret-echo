@@ -1,20 +1,55 @@
-services:
-    backend:
-        build: .
-        ports:
-            - "4000:4000"
-        depends_on:
-            - mongo
-        networks:
-            - my-network
+# docker-compose.yml
+version: "3.8"
 
-    mongo:
-        image: mongo:latest
+services:
+    mongodb:
+        image: mongo:6.0
+        container_name: chat-mongo
+        restart: unless-stopped
+        environment:
+            MONGO_INITDB_DATABASE: chatdb
+        volumes:
+            - mongo-data:/data/db
         ports:
             - "27017:27017"
-        networks:
-            - my-network
 
-networks:
-    my-network:
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: chat-backend
+        restart: unless-stopped
+        environment:
+            - PORT=4000
+            - DATABASE_URL=mongodb://mongodb:27017/chatdb
+            - JWT_SECRET=${JWT_SECRET}
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+        depends_on:
+            - mongodb
+            - redis
+        ports:
+            - "4000:4000"
 
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        container_name: chat-frontend
+        restart: unless-stopped
+        environment:
+            - NEXT_PUBLIC_SOCKET_URL=http://localhost:4000
+        depends_on:
+            - backend
+        ports:
+            - "3000:3000"
+
+    redis:
+        image: redis:7.0
+        container_name: chat-redis
+        restart: unless-stopped
+        ports:
+            - "6379:6379"
+
+volumes:
+    mongo-data:
