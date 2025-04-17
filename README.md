@@ -10,6 +10,14 @@ A real-time chat application built with **Next.js**, **Socket.IO**, and a RESTfu
 
 ---
 
+## 🌐 Deployed on
+
+Frontend (Vercel): <https://secret-echo.vercel.app/login>
+
+Backend (Render): <https://secret-echo.onrender.com>
+
+---
+
 ## 🚀 Setup Instructions
 
 ### 1. Clone the Repository
