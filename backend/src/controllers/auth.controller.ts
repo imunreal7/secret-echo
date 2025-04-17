@@ -29,13 +29,3 @@ export const login: RequestHandler = async (req, res, next) => {
         next(err);
     }
 };
-
-export const logout: RequestHandler = async (req, res, next) => {
-    try {
-        res.clearCookie("token");
-        res.json({ message: "Logout successful" });
-    } catch (err) {
-        next(err);
-    }
-};
-

@@ -1,5 +1,3 @@
-// pages/chat/[roomId].tsx
-
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import api from "../../services/api";
@@ -25,7 +23,8 @@ export default function ChatPage() {
     const socketRef = useRef<Socket | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const { logout } = useAuth();
-    // 🔑 Load current user’s name (replace with your auth logic)
+
+    // Load current user’s name (replace with your auth logic)
     useEffect(() => {
         if (typeof window !== "undefined") {
             const saved = localStorage.getItem("username");
@@ -33,13 +32,13 @@ export default function ChatPage() {
         }
     }, []);
 
-    // 📥 Fetch chat history
+    // Fetch chat history
     useEffect(() => {
         if (!roomId) return;
         api.get(`/chats/${roomId}`).then((res) => setMessages(res.data));
     }, [roomId]);
 
-    // 🔌 Set up socket.io
+    // Set up socket.io
     useEffect(() => {
         if (!roomId) return;
         const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL!);
@@ -48,6 +47,7 @@ export default function ChatPage() {
 
         socket.on("message", (msg: Message) => {
             setMessages((prev) => [...prev, msg]);
+            // hide spinner when AI responds (sender === null)
             if (!msg.sender) {
                 setLoading(false);
             }
@@ -58,7 +58,7 @@ export default function ChatPage() {
         };
     }, [roomId]);
 
-    // 🔄 Auto‑scroll
+    // Auto‑scroll
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
@@ -67,12 +67,15 @@ export default function ChatPage() {
         e.preventDefault();
         if (!newMessage.trim()) return;
         setLoading(true);
-        await api.post("/chats", { roomId, content: newMessage.trim() });
-        setNewMessage("");
+        api.post("/chats", { roomId, content: newMessage.trim() })
+            .then(() => setNewMessage(""))
+            .catch((err) => {
+                console.error(err);
+                setLoading(false);
+            });
     };
 
     const handleLogout = async () => {
-        // 🚪 clear tokens, etc.
         await logout();
         router.push("/login");
     };
@@ -87,7 +90,7 @@ export default function ChatPage() {
                 fontFamily: "Arial, sans-serif",
             }}
         >
-            {/* ─── 1) HEADER ───────────────────────────────────────── */}
+            {/* HEADER */}
             <header
                 style={{
                     display: "flex",
@@ -123,7 +126,7 @@ export default function ChatPage() {
                 </button>
             </header>
 
-            {/* ─── 2) MESSAGES ─────────────────────────────────────── */}
+            {/* MESSAGES */}
             <main
                 style={{
                     flex: 1,
@@ -135,8 +138,9 @@ export default function ChatPage() {
                 }}
             >
                 {messages.map((msg) => {
-                    const isUser = msg.sender === username;
-                    const label = msg.sender ? "You" : "AI Bot";
+                    // Treat any non-null sender as user's message
+                    const isUser = Boolean(msg.sender);
+                    const label = isUser ? "You" : "AI Bot";
 
                     return (
                         <div
@@ -203,7 +207,7 @@ export default function ChatPage() {
                 <div ref={messagesEndRef} />
             </main>
 
-            {/* ─── 3) INPUT ────────────────────────────────────────── */}
+            {/* INPUT */}
             <form
                 onSubmit={handleSendMessage}
                 style={{ padding: "1rem", background: "#ffffff", borderTop: "1px solid #e5e7eb" }}
